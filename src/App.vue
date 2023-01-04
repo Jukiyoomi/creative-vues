@@ -7,20 +7,19 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HeaderComponent from "@/components/Header.vue";
+<script lang="ts" setup>
+import HeaderComponent from "@/components/HeaderComponent.vue";
 import "vue3-toastify/dist/index.css";
-
-export default defineComponent({
-  name: "App",
-  components: { HeaderComponent },
-  data() {
-    return {
-      //
-    };
-  },
-});
+//
+// export default defineComponent({
+//   name: "App",
+//   components: { HeaderComponent },
+//   data() {
+//     return {
+//       //
+//     };
+//   },
+// });
 </script>
 
 <style lang="scss">

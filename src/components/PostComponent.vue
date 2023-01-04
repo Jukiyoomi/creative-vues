@@ -35,7 +35,10 @@
       <!--Likes-->
       <v-card-item v-else>
         <div class="d-flex align-center icons">
-          <v-icon @click="toggleLiked" :color="liked ? 'red' : '#adadad'"
+          <v-icon
+            @click="toggleLiked"
+            :color="liked === true ? 'red' : '#adadad'"
+            :class="!isLoggedIn ? 'unlikable' : null"
             >mdi-heart</v-icon
           >
           <p>{{ post.likes.length }}</p>
@@ -45,11 +48,13 @@
   </v-card>
 </template>
 
-<script>
-import AvatarComponent from "@/components/Avatar.vue";
-import { formatDate } from "@/helpers/date";
+<script lang="ts">
+import AvatarComponent from "@/components/AvatarComponent.vue";
 import { deleteDocs, updateDocs } from "@/firebase/queries";
+import { formatDate } from "@/helpers/date";
 import { store } from "@/store";
+import { computed, ref } from "vue";
+import { IPostProps } from "@/interfaces";
 
 export default {
   name: "PostComponent",
@@ -69,58 +74,64 @@ export default {
     },
     isOnDashboard: Boolean,
   },
-  data() {
-    return {
-      createdAt: "",
-      onUpdateMode: false,
-      updateValue: this.post.text,
-      liked: this.post.likes.includes(store.state.user.uid),
+  setup(props: IPostProps) {
+    const createdAt = computed(() => formatDate(props.post.timestamp.seconds));
+    const onUpdateMode = ref(false);
+    const updateValue = ref(props.post.text);
+    const liked = computed(() =>
+      store.state.user?.uid
+        ? props.post.likes.includes(store.state.user?.uid)
+        : null
+    );
+
+    const isLoggedIn = computed(() => !!store.state.user);
+
+    const deletePost = async () => {
+      await deleteDocs("posts", props.post.id);
+      await store.dispatch("deletePost", props.post.id);
     };
-  },
-  methods: {
-    formatDate,
-    async deletePost() {
-      await deleteDocs("posts", this.post.id);
-      await store.dispatch("deletePost", this.post.id);
-    },
-    toggleUpdateMode() {
+    const toggleUpdateMode = () => {
       // Si on est en Update mode et si le texte du poste n'a pas changé, update
-      if (this.onUpdateMode && this.updateValue !== this.post.text) {
-        this.updatePost();
+      if (onUpdateMode.value && updateValue.value !== props.post.text) {
+        updatePost();
       }
-      this.onUpdateMode = !this.onUpdateMode;
-    },
-    async updatePost() {
-      await updateDocs("posts", this.post.id, {
-        text: this.updateValue,
+      onUpdateMode.value = !onUpdateMode.value;
+    };
+
+    const updatePost = async () => {
+      await updateDocs("posts", props.post.id, {
+        text: updateValue.value,
         modified: true,
       });
       await store.dispatch("updatePost", {
-        id: this.post.id,
-        text: this.updateValue,
+        id: props.post.id,
+        text: updateValue.value,
       });
-    },
-    async toggleLiked() {
-      if (!this.liked) {
-        await updateDocs("posts", this.post.id, {
-          likes: [...this.post.likes, store.state.user.uid],
+    };
+    const toggleLiked = async () => {
+      if (liked.value === false) {
+        await updateDocs("posts", props.post.id, {
+          likes: [...props.post.likes, store.state.user?.uid],
         });
       } else {
-        await updateDocs("posts", this.post.id, {
-          likes: this.post.likes.filter(
-            (like) => like !== store.state.user.uid
+        await updateDocs("posts", props.post.id, {
+          likes: props.post.likes.filter(
+            (like: string) => like !== store.state.user?.uid
           ),
         });
       }
-      this.liked = !this.liked;
-    },
-  },
-  created() {
-    this.createdAt = formatDate(this.post.timestamp.seconds);
-  },
-  updated() {
-    console.log("Post updated");
-    this.createdAt = formatDate(this.post.timestamp.seconds);
+    };
+
+    return {
+      createdAt,
+      onUpdateMode,
+      updateValue,
+      liked,
+      isLoggedIn,
+      deletePost,
+      toggleUpdateMode,
+      toggleLiked,
+    };
   },
 };
 </script>
@@ -131,5 +142,9 @@ export default {
 }
 textarea {
   resize: vertical;
+}
+.unlikable {
+  pointer-events: none;
+  user-select: none;
 }
 </style>

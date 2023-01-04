@@ -50,9 +50,4 @@ export const store = createStore<State>({
       context.commit("setPosts", updatedPosts);
     },
   },
-  getters: {
-    getUser(state): User | null {
-      return state.user;
-    },
-  },
 });

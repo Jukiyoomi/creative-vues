@@ -4,7 +4,10 @@
   </button>
 </template>
 
-<script>
+<script lang="ts">
+import { computed } from "vue";
+import { IButtonProps } from "@/interfaces";
+
 export default {
   name: "ButtonComponent",
   props: {
@@ -13,14 +16,16 @@ export default {
     onClick: Function,
     disabled: Boolean,
   },
-  computed: {
-    customClass() {
-      return [
-        this.primary ? "primary" : "secondary",
-        this.classes ?? "",
-        this.disabled ? "disabled" : null,
-      ];
-    },
+  setup(props: IButtonProps) {
+    const customClass = computed(() => [
+      props.primary ? "primary" : "secondary",
+      String(props.classes) ?? "",
+      props.disabled ? "disabled" : null,
+    ]);
+
+    return {
+      customClass,
+    };
   },
 };
 </script>

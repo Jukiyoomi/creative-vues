@@ -3,27 +3,17 @@
   <posts-component :posts="posts"></posts-component>
 </template>
 
-<script>
-import { defineComponent } from "vue";
-import PostsComponent from "@/components/Posts.vue";
+<script lang="ts" setup>
+import { ref } from "vue";
+import PostsComponent from "@/components/PostsComponent.vue";
 import { getDocs } from "@/firebase/queries";
 import { store } from "@/store";
-import TitleComponent from "@/components/Title";
+import TitleComponent from "@/components/TitleComponent.vue";
 
-// Components
-export default defineComponent({
-  name: "HomeView",
-  components: { TitleComponent, PostsComponent },
-  data() {
-    return {
-      posts: null,
-    };
-  },
-  created() {
-    getDocs("posts", (data) => {
-      this.posts = data;
-      store.dispatch("getPosts", data);
-    });
-  },
+const posts = ref();
+
+getDocs("posts", (data) => {
+  posts.value = data;
+  store.dispatch("getPosts", data);
 });
 </script>

@@ -18,32 +18,14 @@
   </header>
 </template>
 
-<script>
-import ButtonComponent from "@/components/Button.vue";
+<script lang="ts" setup>
+import ButtonComponent from "@/components/ButtonComponent.vue";
 import { store } from "@/store";
-import AvatarComponent from "@/components/Avatar.vue";
-export default {
-  name: "HeaderComponent",
-  components: { AvatarComponent, ButtonComponent },
-  data() {
-    return {
-      user: null,
-      isLoggedIn: false,
-    };
-  },
-  updated() {
-    this.isLoggedIn = !!store.state.user;
-    this.user = store.state.user;
-  },
-  watch: {
-    "$store.state.user": {
-      handler() {
-        this.isLoggedIn = !!store.state.user;
-        this.user = store.state.user;
-      },
-    },
-  },
-};
+import AvatarComponent from "@/components/AvatarComponent.vue";
+import { computed } from "vue";
+
+const user = computed(() => store.state.user);
+// const isLoggedIn = computed(() => !!store.state.user);
 </script>
 
 <style scoped lang="scss">

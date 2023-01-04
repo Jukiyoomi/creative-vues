@@ -2,14 +2,11 @@
   <h1 class="title">{{ text }}</h1>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "TitleComponent",
   props: {
-    text: {
-      type: String,
-      required: true,
-    },
+    text: String,
   },
 };
 </script>

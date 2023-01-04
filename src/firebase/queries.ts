@@ -1,5 +1,5 @@
 import * as firebase from "firebase/firestore";
-import { auth, db } from "@/firebase/index";
+import { db } from "@/firebase/index";
 import { Post } from "@/interfaces";
 
 export const getCollection = (table: string) => firebase.collection(db, table);
@@ -22,7 +22,6 @@ export async function getDocs(table: string, cb: (data: Post[]) => void) {
     const result = snapshot.docs.map((doc) => {
       return {
         ...doc.data(),
-        user: auth.currentUser?.uid,
         id: doc.id,
       } as Post;
     });

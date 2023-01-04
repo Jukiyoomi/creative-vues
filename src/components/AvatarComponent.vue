@@ -12,13 +12,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "AvatarComponent",
   props: {
-    url: String,
+    url: {
+      type: String,
+      required: true,
+    },
   },
-  methods: {},
 };
 </script>
 

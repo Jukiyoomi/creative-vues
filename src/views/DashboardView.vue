@@ -9,32 +9,25 @@
   ></posts-component>
 </template>
 
-<script>
-import PostsComponent from "@/components/Posts.vue";
+<script lang="ts" setup>
+import PostsComponent from "@/components/PostsComponent.vue";
 import { store } from "@/store";
 import router from "@/router";
-import TitleComponent from "@/components/Title";
-import ButtonComponent from "@/components/Button";
+import TitleComponent from "@/components/TitleComponent.vue";
+import ButtonComponent from "@/components/ButtonComponent.vue";
 import { auth } from "@/firebase";
+import { computed } from "vue";
 
-export default {
-  name: "DashboardView",
-  components: { ButtonComponent, TitleComponent, PostsComponent },
-  data() {
-    return {
-      posts: store.state.posts.filter(
-        (post) => post.user === store.getters.getUser.uid
-      ),
-      username: store.getters.getUser.displayName,
-      isOnDashboard: router.currentRoute.value.path === "/dashboard",
-    };
-  },
-  methods: {
-    async logout() {
-      await auth.signOut();
-    },
-  },
-};
+const posts = computed(() =>
+  store.state.posts.filter((post) => post.user === store.state.user?.uid)
+);
+const username = computed(() => store.state.user?.displayName);
+const isOnDashboard = computed(
+  () => router.currentRoute.value.path === "/dashboard"
+);
+async function logout() {
+  await auth.signOut();
+}
 </script>
 
 <style scoped></style>

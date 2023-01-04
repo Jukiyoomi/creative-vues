@@ -3,7 +3,7 @@
     <title-component text="Join Today"></title-component>
     <div>
       <p>Sign in with one of the providers</p>
-      <button-component classes="grow" :on-click="this.auth">
+      <button-component classes="grow" :on-click="authUser">
         <v-icon large color="#018f01">mdi-google</v-icon>
         Sign in with Google</button-component
       >
@@ -11,29 +11,24 @@
   </section>
 </template>
 
-<script>
-import ButtonComponent from "@/components/Button.vue";
+<script lang="ts" setup>
+import ButtonComponent from "@/components/ButtonComponent.vue";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "@/firebase";
 import { store } from "@/store";
 import router from "@/router";
-import TitleComponent from "@/components/Title";
-export default {
-  name: "AuthView",
-  components: { TitleComponent, ButtonComponent },
-  methods: {
-    async auth() {
-      const googleProvider = new GoogleAuthProvider();
-      try {
-        const result = await signInWithPopup(auth, googleProvider);
-        await store.dispatch("setUser", result.user);
-        setTimeout(async () => await router.push({ name: "dashboard" }), 2000);
-      } catch (e) {
-        console.log(e);
-      }
-    },
-  },
-};
+import TitleComponent from "@/components/TitleComponent.vue";
+
+async function authUser() {
+  const googleProvider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    await store.dispatch("setUser", result.user);
+    setTimeout(async () => await router.push({ name: "dashboard" }), 2000);
+  } catch (e) {
+    console.log(e);
+  }
+}
 </script>
 
 <style scoped lang="scss">
