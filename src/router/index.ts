@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import { ifAuthenticated } from "@/firebase";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -8,13 +9,21 @@ const routes: Array<RouteRecordRaw> = [
     component: HomeView,
   },
   {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    path: "/auth",
+    name: "auth",
+    component: () => import("../views/AuthView.vue"),
+  },
+  {
+    path: "/new",
+    name: "new_post",
+    component: () => import("../views/FormView.vue"),
+  },
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    component: () => import("../views/DashboardView.vue"),
+    meta: { needAuth: true },
+    beforeEnter: ifAuthenticated,
   },
 ];
 
