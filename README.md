@@ -1,5 +1,7 @@
 # creative-vues
 
+Made with heart !
+
 ## Project setup
 ```
 pnpm install
